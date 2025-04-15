@@ -42,4 +42,12 @@ class dbaccess {
     public function getLastInsertId() {
         return $this->pdo->lastInsertId();
     }
+
+    // Gibt genau einen Datensatz zurück
+    public function getSingle($sql, $params = []) {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 }

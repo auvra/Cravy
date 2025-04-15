@@ -1,28 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <title>Registrierung</title>
+  <meta charset="UTF-8">
+  <title>Registrierung</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/script.js" defer></script>
 </head>
 <body>
-    <h1>Registrierung</h1>
-    <form id="registerForm">
-        <input type="text" name="salutation" placeholder="Anrede (Herr/Frau/Divers)" required><br>
-        <input type="text" name="firstname" placeholder="Vorname" required><br>
-        <input type="text" name="lastname" placeholder="Nachname" required><br>
-        <input type="text" name="address" placeholder="Adresse" required><br>
-        <input type="text" name="zip" placeholder="PLZ" required><br>
-        <input type="text" name="city" placeholder="Ort" required><br>
-        <input type="email" name="email" placeholder="Email" required><br>
-        <input type="text" name="username" placeholder="Benutzername" required><br>
-        <input type="password" name="password" placeholder="Passwort" required><br>
-        <input type="text" name="payment_info" placeholder="Zahlungsinfo"><br>
-        <button type="submit">Registrieren</button>
-    </form>
+  <h2>Registrieren</h2>
 
-    <div id="response"></div>
+  <form id="registerForm">
+    <input type="text" name="salutation" placeholder="Anrede" required><br>
+    <input type="text" name="firstname" placeholder="Vorname" required><br>
+    <input type="text" name="lastname" placeholder="Nachname" required><br>
+    <input type="text" name="address" placeholder="Adresse" required><br>
+    <input type="text" name="zip" placeholder="PLZ" required><br>
+    <input type="text" name="city" placeholder="Ort" required><br>
+    <input type="email" name="email" placeholder="E-Mail" required><br>
+    <input type="text" name="username" placeholder="Benutzername" required><br>
+    <input type="password" name="password" placeholder="Passwort" required><br>
+    <input type="text" name="payment_info" placeholder="Zahlungsinformation"><br>
+    <button type="submit">Registrieren</button>
+  </form>
 
-    <script src="../js/script.js"></script>
+  <div id="response"></div>
 </body>
 </html>

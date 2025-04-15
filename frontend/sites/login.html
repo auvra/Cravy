@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/script.js" defer></script>
+</head>
+<body>
+  <h2>Login</h2>
+
+  <form id="loginForm">
+    <input type="text" id="loginCredentials" placeholder="Benutzername oder E-Mail" required><br>
+    <input type="password" id="password" placeholder="Passwort" required><br>
+    <label><input type="checkbox" id="remember"> Login merken</label><br>
+    <button type="submit">Einloggen</button>
+  </form>
+
+  <div id="response"></div>
+</body>
+</html>
