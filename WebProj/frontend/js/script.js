@@ -79,12 +79,13 @@ $(document).ready(function () {
             });
             
           } else {
-            window.location.href = "login.html";
+            window.location.href = "frontend/sites/login.html";
           }
         }
       });
     }
   });
+  
   
   // ========== LOGOUT FUNKTION ==========
   function logout() {
@@ -93,7 +94,7 @@ $(document).ready(function () {
       type: "POST",
       data: { action: "logout" },
       success: function () {
-        window.location.href = "Frontend/sites/login.html";
+        window.location.href = "frontend/sites/login.html";
       }
     });
   }
