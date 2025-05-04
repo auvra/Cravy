@@ -3,39 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <title>Produkte - Cravy</title>
-  <link rel="stylesheet" href="../../assets/css/styles.css" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="../res/css/style.css">
 </head>
 <body>
   <h1>Unsere Produkte</h1>
-  <div id="product-list" class="product-grid"></div>
+  <div id="product-grid" class="product-grid"></div>
 
-  <script>
-    $(document).ready(function () {
-      $.ajax({
-        url: "../../backend/get_products.php",
-        method: "GET",
-        success: function (data) {
-          let output = "";
-          if (data.length === 0) {
-            output = "<p>Keine Produkte gefunden.</p>";
-          } else {
-            data.forEach(product => {
-              output += `
-                <div class="product-card">
-                  <img src="../../assets/img/${product.image_path}" alt="${product.name}">
-                  <h3>${product.name}</h3>
-                  <p>${product.description}</p>
-                  <p><strong>${product.price} €</strong></p>
-                  <p>⭐ ${product.rating}</p>
-                </div>
-              `;
-            });
-          }
-          $("#product-list").html(output);
-        }
-      });
-    });
-  </script>
+  <script src="../../frontend/js/load_products.js"></script>
+
 </body>
 </html>
+

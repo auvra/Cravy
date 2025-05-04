@@ -5,7 +5,9 @@
   <title>Registrierung</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../js/script.js" defer></script>
+  <link rel="stylesheet" href="../res/css/style.css">
 </head>
+
 <body>
   <h2>Registrieren</h2>
 
@@ -19,10 +21,16 @@
     <input type="email" name="email" placeholder="E-Mail" required><br>
     <input type="text" name="username" placeholder="Benutzername" required><br>
     <input type="password" name="password" placeholder="Passwort" required><br>
+    <input type="password" name="confirm_password" placeholder="Passwort bestätigen" required><br>
     <input type="text" name="payment_info" placeholder="Zahlungsinformation"><br>
+
     <button type="submit">Registrieren</button>
   </form>
 
+  <div class="auth-links">
+    <p>Bereits registriert? <a href="login.html">Zum Login</a></p>
+  </div>
+  
   <div id="response"></div>
 </body>
 </html>

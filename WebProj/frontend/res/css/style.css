@@ -15,11 +15,13 @@ nav a {
   color: #c71585;
 }
 
-/* ===== Styles für Produktansicht (products.html) ===== */
+/* ===== Styles für Produktansicht ===== */
 .product-grid {
   display: grid;
   gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-top: 30px;
+  padding: 10px;
 }
 
 .product-card {
@@ -27,7 +29,8 @@ nav a {
   border-radius: 10px;
   padding: 15px;
   text-align: center;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .product-card img {
@@ -35,4 +38,27 @@ nav a {
   height: 180px;
   object-fit: cover;
   border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.product-card h3 {
+  margin: 0 0 5px;
+  color: #c71585;
+}
+
+/* ===== Styles für Login & Register Seiten ===== */
+.auth-links {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.auth-links a {
+  color: #c71585;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
 }
