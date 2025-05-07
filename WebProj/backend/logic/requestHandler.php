@@ -37,16 +37,24 @@ function login() {
     if ($user && password_verify($password, $user['password_hash'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
+        $_SESSION['is_admin'] = $user['is_admin'];
 
         if ($remember) {
             setcookie("remember_me", $user['id'], time() + (30 * 24 * 60 * 60), "/");
         }
 
-        echo json_encode(["success" => true]);
+        echo json_encode([
+            "success" => true,
+            "is_admin" => $user['is_admin'] == 1
+        ]);
     } else {
-        echo json_encode(["success" => false, "message" => "❌ Benutzername oder Passwort falsch."]);
+        echo json_encode([
+            "success" => false,
+            "message" => "❌ Benutzername oder Passwort falsch."
+        ]);
     }
 }
+
 
 function logout() {
     session_unset();
