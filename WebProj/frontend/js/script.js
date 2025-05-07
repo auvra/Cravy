@@ -70,7 +70,7 @@ if ($('#user-info').length) {
     success: function (response) {
       if (response.loggedIn) {
         $('#user-info').html(`
-          <p>Angemeldet als: <strong>${response.username}</strong></p>
+          <p><strong>${response.username}</strong></p>
           <button id="logoutBtn">Logout</button>
         `);
 
@@ -155,7 +155,7 @@ if ($('#user-info').length) {
     success: function (response) {
       if (response.loggedIn) {
         $('#user-info').html(`
-          <p>Angemeldet als: <strong>${response.username}</strong></p>
+          <p><strong>${response.username}</strong></p>
           <button id="logoutBtn">Logout</button>
         `);
 
