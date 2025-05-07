@@ -8,5 +8,21 @@ $stmt->execute();
 
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Typumwandlung: price und rating als float casten
+foreach ($products as &$product) {
+    $product['price'] = (float) $product['price'];
+    $product['rating'] = isset($product['rating']) ? (float) $product['rating'] : null;
+}
+unset($product);
+
+// Kategorien abrufen (distinct)
+$queryCategories = "SELECT DISTINCT category FROM products ORDER BY category ASC";
+$stmtCategories = $pdo->prepare($queryCategories);
+$stmtCategories->execute();
+$categories = $stmtCategories->fetchAll(PDO::FETCH_COLUMN);
+
 header('Content-Type: application/json');
-echo json_encode($products);
+echo json_encode([
+    'products' => $products,
+    'categories' => $categories
+]);
