@@ -5,17 +5,28 @@
   <title>Login</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="../js/script.js" defer></script>
+  <link rel="stylesheet" href="../res/css/style.css">
 </head>
 <body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="../../index.html">Startseite</a>
+    </div>
+  </nav>
+  <div class="auth-container">
   <h2>Login</h2>
-
   <form id="loginForm">
     <input type="text" id="loginCredentials" placeholder="Benutzername oder E-Mail" required><br>
     <input type="password" id="password" placeholder="Passwort" required><br>
-    <label><input type="checkbox" id="remember"> Login merken</label><br>
+    <div class="remember-me">
+      <input type="checkbox" id="remember">
+      <label for="remember">Login merken</label>
+    </div>       
     <button type="submit">Einloggen</button>
   </form>
-
+    <p>Noch kein Konto? <a href="register.html">Jetzt registrieren</a></p>
+  </div>
+  
   <div id="response"></div>
 </body>
 </html>
