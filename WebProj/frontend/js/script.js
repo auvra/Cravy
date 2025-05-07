@@ -61,32 +61,6 @@ $(document).ready(function () {
       });
     }
   
-<<<<<<< HEAD
-    // ========== LOGIN-STATUS PRÜFEN (für index.html) ==========
-    if ($('#user-info').length) {
-      $.ajax({
-        url: "backend/logic/requestHandler.php?action=check_login",
-        method: "GET",
-        dataType: "json",
-        success: function (response) {
-          if (response.loggedIn) {
-            $('#user-info').html(`
-              <p>${response.username}</p>
-              <button id="logoutBtn">Logout</button>
-            `);
-            
-            $('#logoutBtn').on("click", function () {
-              logout();
-            });
-            
-          } else {
-            window.location.href = "login.html";
-          }
-        }
-      });
-    }
-  });
-=======
 // ========== LOGIN-STATUS PRÜFEN (für index.html) ==========
 if ($('#user-info').length) {
   $.ajax({
@@ -119,7 +93,6 @@ if ($('#user-info').length) {
 
 
   
->>>>>>> 4bad8470704af9490788ec26646be62cc2e39ee6
   
   // ========== LOGOUT FUNKTION ==========
   function logout() {
@@ -128,9 +101,6 @@ if ($('#user-info').length) {
       type: "POST",
       data: { action: "logout" },
       success: function () {
-<<<<<<< HEAD
-        window.location.href = "Frontend/sites/login.html";
-=======
         window.location.href = "index.html";
       }
     });
@@ -216,7 +186,6 @@ if ($('#user-info').length) {
       data: { action: "logout" },
       success: function () {
         window.location.href = "index.html";
->>>>>>> 4bad8470704af9490788ec26646be62cc2e39ee6
       }
     });
   }
