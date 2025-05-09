@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Warenkorb - Cravy</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/cart.js" defer></script>
+  <link rel="stylesheet" href="../res/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="../../index.html">Startseite</a>
+      <a href="products.html">Produkte</a>
+    </div>
+    <div class="nav-right" id="user-info"></div>
+  </nav>
+
+  <h1>🛒 Dein Warenkorb</h1>
+
+  <div id="cart-container">
+    <table id="cart-table">
+      <thead>
+        <tr>
+          <th>Produkt</th>
+          <th>Menge</th>
+          <th>Preis</th>
+          <th>Gesamt</th>
+          <th>Aktion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamisch gefüllt -->
+      </tbody>
+    </table>
+    <div id="cart-summary">
+      <strong>Gesamtsumme: <span id="cart-total">0.00 €</span></strong>
+    </div>
+  </div>
+
+</body>
+</html>
