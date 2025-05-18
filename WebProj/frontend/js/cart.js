@@ -17,7 +17,7 @@ $(document).ready(function () {
 
   function fetchCart() {
     $.ajax({
-      url: "../../backend/logic/add_to_cart.php",
+      url: "../../backend/logic/Handler/cartHandler.php",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ action: "get" }),
@@ -37,7 +37,7 @@ $(document).ready(function () {
 
   function updateCart(productId, quantity) {
     $.ajax({
-      url: "../../backend/logic/add_to_cart.php",
+      url: "../../backend/logic/Handler/cartHandler.php",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({

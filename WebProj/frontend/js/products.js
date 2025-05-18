@@ -28,7 +28,7 @@ $(document).ready(function () {
   function loadProducts() {
     if ($('#product-grid').length) {
       $.ajax({
-        url: "http://localhost/cravy/WebProj/backend/logic/get_products.php",
+        url: "http://localhost/cravy/WebProj/backend/logic/Handler/productHandler.php",
         type: "GET",
         dataType: "json",
         success: function (data) {
@@ -109,7 +109,7 @@ $(document).ready(function () {
 
     // → Server aktualisieren via AJAX
     $.ajax({
-      url: "http://localhost/cravy/WebProj/backend/logic/add_to_cart.php",
+      url: "http://localhost/cravy/WebProj/backend/logic/Handler/cartHandler.php",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ action: "add", productId, quantity: 1 }),
