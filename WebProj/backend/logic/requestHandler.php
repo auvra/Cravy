@@ -25,6 +25,8 @@ switch ($action) {
         break;
 }
 
+
+// Zu authHandler?
 function login() {
     $db = dbaccess::getInstance();
     $login = $_POST['loginCredentials'] ?? '';
