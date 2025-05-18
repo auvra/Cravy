@@ -2,33 +2,35 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Produkte - Cravy</title>
+  <title>Produkte – Cravy</title>
+  <link rel="stylesheet" href="../res/css/style.css" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../frontend/js/products.js" defer></script>
-  <link rel="stylesheet" href="../res/css/style.css">
+  <script src="../js/session.js" defer></script>
+  <!-- Produkt-Logik & Drag’n’Drop -->
+  <script src="../js/products.js" defer></script>
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-left">
       <a href="../../index.html">Startseite</a>
-      <a href="cart.html">Warenkorb</a>
+      <a href="cart.html" id="cart-indicator" class="drop-target">
+        Warenkorb (<span id="cart-count">0</span>)
+      </a>
     </div>
-    <div class="nav-right" id="user-info">
-    </div>
-    <div id="cart-info">
-      🛒 <span id="cart-count">0</span> Artikel
-    </div>
+    <div class="nav-right" id="user-info"></div>
   </nav>
 
-  <h1>Unsere Produkte</h1>
+  <main>
+    <h1>Unsere Produkte</h1>
 
-  <div id="filter-container">
-    <label for="category-filter">Kategorie:</label>
-    <select id="category-filter">
-      <option value="">Alle Kategorien</option>
-    </select>
-  </div>
+    <div id="filter-container">
+      <label for="category-filter">Kategorie:</label>
+      <select id="category-filter">
+        <option value="">Alle Kategorien</option>
+      </select>
+    </div>
 
-  <div id="product-grid" class="product-grid"></div>
+    <div id="product-grid" class="product-grid"></div>
+  </main>
 </body>
 </html>

@@ -1,83 +1,148 @@
 <?php
-session_start();
-header('Content-Type: application/json');
+// backend/logic/Handler/cartHandler.php
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Nicht eingeloggt']);
-    exit;
-}
+class cartHandler {
+    public function handle(string $action, array $input): array {
+        switch ($action) {
+            case 'add_to_cart':
+                $pid = (int)($input['productId'] ?? 0);
+                $qty = (int)($input['quantity']  ?? 1);
+                return $this->addToCart($pid, $qty);
 
-$userId = $_SESSION['user_id'];
+            case 'get_cart':
+                return $this->getCart();
 
-$input = json_decode(file_get_contents("php://input"), true);
-$action = $input['action'] ?? 'add';
-$productId = isset($input['productId']) ? (int)$input['productId'] : 0;
-$quantity = isset($input['quantity']) ? (int)$input['quantity'] : 1;
+            case 'update_cart':
+                $pid = (int)($input['productId'] ?? 0);
+                $qty = (int)($input['quantity']  ?? 0);
+                return $this->updateCart($pid, $qty);
 
-try {
-    $pdo = new PDO("mysql:host=localhost;dbname=cravy", "root", "");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            case 'remove_from_cart':
+                $pid = (int)($input['productId'] ?? 0);
+                return $this->removeFromCart($pid);
 
-    if ($action === 'add') {
-        if ($productId <= 0 || $quantity <= 0) {
-            echo json_encode(['success' => false, 'message' => 'Ungültige Produktdaten']);
-            exit;
+            default:
+                return ['success'=>false,'error'=>"Unknown action: $action"];
         }
-
-        $stmt = $pdo->prepare("SELECT * FROM order_items WHERE user_id = ? AND product_id = ?");
-        $stmt->execute([$userId, $productId]);
-        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($existing) {
-            $stmt = $pdo->prepare("UPDATE order_items SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?");
-            $stmt->execute([$quantity, $userId, $productId]);
-        } else {
-            $stmt = $pdo->prepare("INSERT INTO order_items (user_id, product_id, quantity) VALUES (?, ?, ?)");
-            $stmt->execute([$userId, $productId, $quantity]);
-        }
-
-        $stmt = $pdo->prepare("SELECT SUM(quantity) AS total FROM order_items WHERE user_id = ?");
-        $stmt->execute([$userId]);
-        $totalItems = (int) $stmt->fetchColumn();
-
-        echo json_encode([
-            'success' => true,
-            'message' => 'Produkt zum Warenkorb hinzugefügt',
-            'cartCount' => $totalItems
-        ]);
-
-    } elseif ($action === 'update') {
-        if ($productId <= 0) {
-            echo json_encode(['success' => false, 'message' => 'Ungültige Produkt-ID']);
-            exit;
-        }
-
-        if ($quantity > 0) {
-            $stmt = $pdo->prepare("UPDATE order_items SET quantity = ? WHERE user_id = ? AND product_id = ?");
-            $stmt->execute([$quantity, $userId, $productId]);
-        } else {
-            $stmt = $pdo->prepare("DELETE FROM order_items WHERE user_id = ? AND product_id = ?");
-            $stmt->execute([$userId, $productId]);
-        }
-
-        echo json_encode(['success' => true, 'message' => 'Warenkorb aktualisiert']);
-
-    } elseif ($action === 'get') {
-        $sql = "
-            SELECT oi.product_id, oi.quantity, p.name, p.price
-            FROM order_items oi
-            JOIN products p ON oi.product_id = p.id
-            WHERE oi.user_id = ?
-        ";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$userId]);
-        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        echo json_encode(["success" => true, "items" => $items]);
-
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Ungültige Aktion']);
     }
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Fehler: ' . $e->getMessage()]);
+
+    private function getConnection(): PDO {
+        $pdo = new PDO("mysql:host=localhost;dbname=cravy;charset=utf8mb4","root","");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo;
+    }
+
+    private function addToCart(int $productId, int $quantity): array {
+        if ($productId<=0||$quantity<=0) {
+            return ['success'=>false,'error'=>'Ungültige Produktdaten'];
+        }
+        try {
+            $userId = $_SESSION['user_id'];
+            $pdo    = $this->getConnection();
+
+            // check if exists in cart table
+            $stmt = $pdo->prepare(
+              "SELECT quantity 
+                 FROM cart 
+                WHERE user_id = ? AND product_id = ?"
+            );
+            $stmt->execute([$userId,$productId]);
+            $exists = $stmt->fetchColumn();
+
+            if ($exists!==false) {
+                // update existing
+                $stmt = $pdo->prepare(
+                  "UPDATE cart 
+                      SET quantity = quantity + ? 
+                    WHERE user_id = ? AND product_id = ?"
+                );
+                $stmt->execute([$quantity,$userId,$productId]);
+            } else {
+                // insert new
+                $stmt = $pdo->prepare(
+                  "INSERT INTO cart (user_id,product_id,quantity,price_at_time)
+                   VALUES (?, ?, ?, 
+                     (SELECT price FROM products WHERE id = ?)
+                   )"
+                );
+                // capture price_at_time as well
+                $stmt->execute([$userId,$productId,$quantity,$productId]);
+            }
+
+            // return updated cart count
+            $stmt = $pdo->prepare(
+              "SELECT SUM(quantity) 
+                 FROM cart 
+                WHERE user_id = ?"
+            );
+            $stmt->execute([$userId]);
+            $total = (int)$stmt->fetchColumn();
+
+            return ['success'=>true,'message'=>'Added to cart','cartCount'=>$total];
+
+        } catch(PDOException $e) {
+            return ['success'=>false,'error'=>$e->getMessage()];
+        }
+    }
+
+    private function getCart(): array {
+        try {
+            $userId = $_SESSION['user_id'];
+            $pdo    = $this->getConnection();
+
+            $stmt = $pdo->prepare(
+              "SELECT c.product_id, c.quantity, p.name, p.price, p.image_path
+                 FROM cart AS c
+                 JOIN products AS p ON c.product_id = p.id
+                WHERE c.user_id = ?"
+            );
+            $stmt->execute([$userId]);
+            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($items as &$i) {
+                $i['price'] = (float)$i['price'];
+            }
+            unset($i);
+
+            return ['success'=>true,'cart'=>$items];
+
+        } catch(PDOException $e) {
+            return ['success'=>false,'error'=>$e->getMessage()];
+        }
+    }
+
+    private function updateCart(int $productId, int $quantity): array {
+        if ($productId<=0) {
+            return ['success'=>false,'error'=>'Ungültige Produkt-ID'];
+        }
+        try {
+            $userId = $_SESSION['user_id'];
+            $pdo    = $this->getConnection();
+
+            if ($quantity>0) {
+                $stmt = $pdo->prepare(
+                  "UPDATE cart 
+                      SET quantity = ? 
+                    WHERE user_id = ? AND product_id = ?"
+                );
+                $stmt->execute([$quantity,$userId,$productId]);
+            } else {
+                $stmt = $pdo->prepare(
+                  "DELETE FROM cart 
+                    WHERE user_id = ? AND product_id = ?"
+                );
+                $stmt->execute([$userId,$productId]);
+            }
+
+            return ['success'=>true,'message'=>'Cart updated'];
+
+        } catch(PDOException $e) {
+            return ['success'=>false,'error'=>$e->getMessage()];
+        }
+    }
+
+    private function removeFromCart(int $productId): array {
+        // simply delete
+        return $this->updateCart($productId, 0);
+    }
 }

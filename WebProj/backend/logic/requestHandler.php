@@ -4,87 +4,102 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once(__DIR__ . '/../config/dbaccess.php');
+header('Content-Type: application/json; charset=utf-8');
 
-header('Content-Type: application/json');
+require_once __DIR__ . '/../config/dbaccess.php';
 
-$action = $_POST['action'] ?? $_GET['action'] ?? null;
+// ──────────────────────────────────────────────────────────────────────────────
+// READ INPUT & DETERMINE ACTION
+// ──────────────────────────────────────────────────────────────────────────────
+
+// 1) Read raw request body
+$rawInput = file_get_contents('php://input');
+
+// 2) Try to decode JSON
+$parsed = json_decode($rawInput, true);
+
+// 3) If valid JSON, use it; otherwise fall back to GET/POST
+if (json_last_error() === JSON_ERROR_NONE && is_array($parsed)) {
+    $input = $parsed;
+} else {
+    // Merge GET and POST parameters as fallback
+    $input = array_merge($_GET, $_POST);
+}
+
+$action  = $input['action'] ?? null;
+$handler = null;
 
 switch ($action) {
+
+    // Authentication
     case 'login':
-        login();
-        break;
     case 'logout':
-        logout();
-        break;
     case 'check_login':
-        checkLoginStatus();
+        require_once __DIR__ . '/Handler/authHandler.php';
+        $handler = new authHandler();
         break;
-    default:
-        echo json_encode(["success" => false, "message" => "Ungültige Aktion."]);
+
+    // Products
+    case 'getProducts':
+    case 'getProduct':
+    case 'createProduct':
+    case 'updateProduct':
+    case 'deleteProduct':
+    case 'deleteImage':
+    case 'searchProducts':
+    case 'getProductsByCategory':
+        require_once __DIR__ . '/Handler/productHandler.php';
+        $handler = new productHandler();
+        break;
+
+    // User management (admin)
+    case 'getUserData':
+    case 'listCustomers':
+    case 'toggleCustomer':
+        require_once __DIR__ . '/Handler/userHandler.php';
+        $handler = new userHandler();
+        break;
+
+    // Cart (must be logged in)
+    case 'add_to_cart':
+    case 'get_cart':
+    case 'update_cart':
+    case 'remove_from_cart':
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+            exit;
+        }
+        require_once __DIR__ . '/Handler/cartHandler.php';
+        $handler = new cartHandler();
+        break;
+
+    // Orders
+    case 'createOrder':
+    case 'getOrders':
+    case 'getOrder':
+        require_once __DIR__ . '/Handler/orderHandler.php';
+        $handler = new orderHandler();
+        break;
+
+    // Vouchers
+    case 'applyVoucher':
+    case 'getVoucher':
+    case 'validateVoucher':
+        require_once __DIR__ . '/Handler/voucherHandler.php';
+        $handler = new voucherHandler();
         break;
 }
 
-
-// Zu authHandler?
-function login() {
-    $db = dbaccess::getInstance();
-    $login = $_POST['loginCredentials'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $remember = $_POST['remember'] === 'true';
-
-    $sql = "SELECT * FROM users WHERE username = :login OR email = :login";
-    $user = $db->getSingle($sql, [':login' => $login]);
-
-    if ($user && password_verify($password, $user['password_hash'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['is_admin'] = $user['is_admin'];
-
-        if ($remember) {
-            setcookie("remember_me", $user['id'], time() + (30 * 24 * 60 * 60), "/");
-        }
-
-        echo json_encode([
-            "success" => true,
-            "is_admin" => $user['is_admin'] == 1
-        ]);
-    } else {
-        echo json_encode([
-            "success" => false,
-            "message" => "❌ Benutzername oder Passwort falsch."
-        ]);
-    }
+// If no handler was matched, return an error
+if (!$handler) {
+    echo json_encode([
+        'success' => false,
+        'error'   => 'Invalid action: ' . ($action ?? 'none')
+    ]);
+    exit;
 }
 
+$response = $handler->handle($action, $input);
 
-function logout() {
-    session_unset();
-    session_destroy();
-    setcookie("remember_me", "", time() - 3600, "/");
-    echo json_encode(["success" => true]);
-}
-
-function checkLoginStatus() {
-    $db = dbaccess::getInstance();
-
-    if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
-        $userId = $_COOKIE['remember_me'];
-        $user = $db->getSingle("SELECT * FROM users WHERE id = :id", [':id' => $userId]);
-
-        if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-        }
-    }
-
-    if (isset($_SESSION['user_id'])) {
-        echo json_encode([
-            "loggedIn" => true,
-            "username" => $_SESSION['username']
-        ]);
-    } else {
-        echo json_encode(["loggedIn" => false]);
-    }
-}
-?>
+echo json_encode($response);

@@ -110,7 +110,11 @@ h1 {
   color: #333;
 }
 
-
+/* ===== Cart Hover ===== */
+.drop-target.drag-over {
+  background-color: rgba(255,255,255,0.3);
+  cursor: copy;
+}
 
 /* ===== Styles für Login & Register Seiten ===== */
 .auth-container {
