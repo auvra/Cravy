@@ -53,6 +53,13 @@ h1 {
   background-color: #a80f6f;
 }
 
+#cart-info {
+  font-weight: bold;
+  color: #c71585;
+  margin-right: 20px;
+}
+
+
 /* ===== Styles für Produktansicht ===== */
 .product-grid {
   display: grid;
