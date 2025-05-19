@@ -30,7 +30,7 @@ class productHandler {
                 return $this->deleteImage($id);
 
             case 'searchProducts':
-                $q = $input['query'] ?? '';
+                $q = trim($input['query'] ?? '');
                 return $this->searchProducts($q);
 
             case 'getProductsByCategory':
@@ -145,33 +145,33 @@ class productHandler {
     // Search products by a query string
      
     private function searchProducts(string $query): array {
-        try {
-            $pdo = new PDO("mysql:host=localhost;dbname=cravy", "root", "");
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = "SELECT * FROM products
-                    WHERE name LIKE :q OR description LIKE :q
-                    ORDER BY created_at DESC";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':q' => "%{$query}%"]);
-            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if (empty($results)) {
-                return ['success' => false, 'error' => 'No matching products'];
-            }
-
-            foreach ($results as &$p) {
-                $p['price']  = (float) $p['price'];
-                $p['rating'] = isset($p['rating']) ? (float) $p['rating'] : null;
-            }
-            unset($p);
-
-            return ['success' => true, 'products' => $results];
-
-        } catch (Exception $e) {
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
+    if ($query === '') {
+        return ['success'=>false,'error'=>'Empty search query'];
     }
+
+    $db = dbaccess::getInstance();
+    $sql = "
+      SELECT * 
+        FROM products
+       WHERE name LIKE :q
+          OR description LIKE :q
+       ORDER BY created_at DESC
+    ";
+    $params = [':q' => "%{$query}%"];
+    $products = $db->select($sql, $params);
+
+    // cast numeric fields
+    foreach ($products as &$p) {
+        $p['price']  = (float)$p['price'];
+        $p['rating'] = isset($p['rating']) ? (float)$p['rating'] : null;
+    }
+    unset($p);
+
+    return [
+      'success'  => true,
+      'products' => $products
+    ];
+}
 
     // Get products filtered by category ID
 

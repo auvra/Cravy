@@ -94,6 +94,16 @@ h1 {
   color: #c71585;
 }
 
+/* ===== Product Search  ===== */
+.search-container {
+  margin-bottom: 1rem;
+}
+#search-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
 /* ===== Filter Dropdown (Kategorien) ===== */
 #filter-container {
   max-width: 300px; /* begrenzt die Breite */

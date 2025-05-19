@@ -202,4 +202,42 @@ $(document).ready(function () {
       }
     });
   }
+
+// 9) Continuous search: debounce + AJAX
+let searchTimer;
+$('#search-input').on('input', function() {
+  const query = $(this).val().trim();
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    if (!query) {
+      loadProducts();
+    } else {
+      console.log('Searching for:', query);          // debug
+      $.ajax({
+        url: "../../backend/logic/requestHandler.php",
+        method: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
+          action: 'searchProducts',
+          query:  query
+        }),
+        success(response) {
+          console.log('Search response:', response);  // debug
+          if (response.success) {
+            renderProducts(response.products);
+            $('#category-filter').val('');
+          } else {
+            $('#product-grid').html(`<p>${response.error}</p>`);
+          }
+        },
+        error(xhr, status, err) {
+          console.error('Search AJAX error:', err);
+          $('#product-grid').html('<p>Fehler bei Produktsuche.</p>');
+        }
+      });
+    }
+  }, 300);
+});
+
 });
