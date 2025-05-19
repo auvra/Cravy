@@ -9,10 +9,31 @@ $(function() {
     API_BASE = 'backend/logic';
   }
 
-  // 2) As soon as DOM is ready, check login status
+  // 2) Registration form submit 
+  if ($('#registerForm').length) {
+    $('#registerForm').on('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      $.ajax({
+        url: `${API_BASE}/register.php`,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success(response) {
+          $('#response').text(response).css('color', 'green');
+        },
+        error(xhr, status, error) {
+          $('#response').text('Error: ' + error).css('color', 'red');
+        }
+      });
+    });
+  }
+
+  // 3) As soon as DOM is ready, check login status
   checkLoginStatus();
 
-  // 3) Login form submit
+  // 4) Login form submit
   $('#loginForm').on('submit', function(e) {
     e.preventDefault();
     const data = {
@@ -22,7 +43,7 @@ $(function() {
       remember:         $('#remember').is(':checked')
     };
     if (!data.loginCredentials || !data.password) {
-      $('#response').text('Bitte Benutzername und Passwort eingeben.').css('color','red');
+      $('#response').text('Please enter username and password.').css('color', 'red');
       return;
     }
     ajaxAuth(data, res => {
@@ -34,12 +55,12 @@ $(function() {
         }));
         window.location.href = '../../index.html';
       } else {
-        $('#response').text(res.error).css('color','red');
+        $('#response').text(res.error).css('color', 'red');
       }
     });
   });
 
-  // 4) Logout button
+  // 5) Logout button click
   $(document).on('click', '#logoutBtn', function() {
     ajaxAuth({ action: 'logout' }, () => {
       localStorage.removeItem('user');
@@ -47,35 +68,31 @@ $(function() {
     });
   });
 
-  // 5) Check login status, render user info, update cart badge, and show admin panel
+  // 6) Check login status and render UI accordingly
   function checkLoginStatus() {
     ajaxAuth({ action: 'check_login' }, res => {
       if (res.success && res.loggedIn) {
         window.isLoggedIn = true;
-        // Render user block with logout button
         $('#user-info').html(`
           <p><strong>${res.username}</strong></p>
           <button id="logoutBtn">Logout</button>
         `);
-        // Update cart count on all pages
         updateCartCount();
-        // Show admin area if the user is admin
         if (res.is_admin === 1) showAdminPanel();
       } else {
         window.isLoggedIn = false;
-        // Compute relative link to login.html
         const loginHref = p.includes('/frontend/sites/')
-          ? 'login.html'              // Already in frontend/sites/
-          : 'frontend/sites/login.html';  // From project root
+          ? 'login.html'
+          : 'frontend/sites/login.html';
         $('#user-info').html(`
-          <p>Du bist derzeit <strong>nicht eingeloggt</strong>.</p>
-          <a href="${loginHref}">Jetzt einloggen</a>
+          <p>You are <strong>not logged in</strong>.</p>
+          <a href="${loginHref}">Login</a>
         `);
       }
     });
   }
 
-  // 6) Fetch full cart and update the #cart-count badge
+  // 7) Fetch full cart and update cart count badge
   function updateCartCount() {
     ajaxAuth({ action: 'get_cart' }, res => {
       if (res.success && Array.isArray(res.cart)) {
@@ -85,7 +102,7 @@ $(function() {
     });
   }
 
-  // 7) Generic AJAX helper for auth & cart calls
+  // 8) Generic AJAX helper for auth & cart calls
   function ajaxAuth(payload, cb) {
     $.ajax({
       url: `${API_BASE}/requestHandler.php`,
@@ -95,19 +112,19 @@ $(function() {
       data: JSON.stringify(payload),
       success: cb,
       error: xhr => {
-        console.error('AJAX-Error', xhr);
-        $('#response').text('Serverfehler').css('color','red');
+        console.error('AJAX Error', xhr);
+        $('#response').text('Server error').css('color', 'red');
       }
     });
   }
 
-  // 8) Show admin panel in the DOM
+  // 9) Show admin panel in the DOM
   function showAdminPanel() {
     $('body').append(`
       <section id="admin-panel" style="margin:20px; padding:15px; border:2px dashed #c71585;">
-        <h2>Admin Bereich</h2>
-        <p>Willkommen im Administrationsbereich.</p>
-        <button onclick="location.href='admin_dashboard.html'">Zum Admin-Dashboard</button>
+        <h2>Admin Area</h2>
+        <p>Welcome to the administration panel.</p>
+        <button onclick="location.href='admin_dashboard.html'">Go to Admin Dashboard</button>
       </section>
     `);
   }
