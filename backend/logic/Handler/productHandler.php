@@ -153,39 +153,10 @@ class productHandler {
             return $success
                 ? ['success' => true, 'message' => 'Produkt erfolgreich aktualisiert.']
                 : ['success' => false, 'error' => 'Aktualisierung fehlgeschlagen.'];
-
-    // Search products by a query string
-     
-    private function searchProducts(string $query): array {
-    if ($query === '') {
-        return ['success'=>false,'error'=>'Empty search query'];
+        }catch (Exception $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+        }
     }
-
-
-    $db = dbaccess::getInstance();
-    $sql = "
-      SELECT * 
-        FROM products
-       WHERE name LIKE :q
-          OR description LIKE :q
-       ORDER BY created_at DESC
-    ";
-    $params = [':q' => "%{$query}%"];
-    $products = $db->select($sql, $params);
-
-    // cast numeric fields
-    foreach ($products as &$p) {
-        $p['price']  = (float)$p['price'];
-        $p['rating'] = isset($p['rating']) ? (float)$p['rating'] : null;
-    }
-    unset($p);
-
-    return [
-      'success'  => true,
-      'products' => $products
-    ];
-}
-
     private function deleteProduct(int $id): array {
         if ($id <= 0) return ['success' => false, 'error' => 'Ungültige Produkt-ID'];
 
