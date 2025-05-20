@@ -67,7 +67,7 @@ $(document).ready(function () {
                alt="${product.name}" />
           <h3>${product.name}</h3>
           <p>${product.description}</p>
-          <p><strong>${product.price.toFixed(2)} €</strong></p>
+          <p><strong>${parseFloat(product.price || 0).toFixed(2)} €</strong></p>
           <p>⭐ ${product.rating?.toFixed(1) || '–'} / 5</p>
           ${btn}
         </div>
