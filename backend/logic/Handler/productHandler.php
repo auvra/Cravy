@@ -32,7 +32,7 @@ class productHandler {
                 return $this->deleteImage($id);
 
             case 'searchProducts':
-                $q = $input['query'] ?? '';
+                $q = trim($input['query'] ?? '');
                 return $this->searchProducts($q);
 
             case 'getProductsByCategory':
@@ -129,6 +129,7 @@ class productHandler {
                 $filename = basename($_FILES['image']['name']);
                 $targetPath = $uploadDir . $filename;
 
+
                 if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
                     return ['success' => false, 'error' => 'Bild konnte nicht gespeichert werden.'];
                 }
@@ -153,10 +154,37 @@ class productHandler {
                 ? ['success' => true, 'message' => 'Produkt erfolgreich aktualisiert.']
                 : ['success' => false, 'error' => 'Aktualisierung fehlgeschlagen.'];
 
-        } catch (Exception $e) {
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
+    // Search products by a query string
+     
+    private function searchProducts(string $query): array {
+    if ($query === '') {
+        return ['success'=>false,'error'=>'Empty search query'];
     }
+
+
+    $db = dbaccess::getInstance();
+    $sql = "
+      SELECT * 
+        FROM products
+       WHERE name LIKE :q
+          OR description LIKE :q
+       ORDER BY created_at DESC
+    ";
+    $params = [':q' => "%{$query}%"];
+    $products = $db->select($sql, $params);
+
+    // cast numeric fields
+    foreach ($products as &$p) {
+        $p['price']  = (float)$p['price'];
+        $p['rating'] = isset($p['rating']) ? (float)$p['rating'] : null;
+    }
+    unset($p);
+
+    return [
+      'success'  => true,
+      'products' => $products
+    ];
+}
 
     private function deleteProduct(int $id): array {
         if ($id <= 0) return ['success' => false, 'error' => 'Ungültige Produkt-ID'];

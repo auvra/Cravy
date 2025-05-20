@@ -1,6 +1,4 @@
 <?php
-// backend/logic/Handler/cartHandler.php
-
 class cartHandler {
     public function handle(string $action, array $input): array {
         switch ($action) {

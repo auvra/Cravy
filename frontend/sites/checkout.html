@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bestellung abschließen – Cravy</title>
+  <link rel="stylesheet" href="../res/css/style.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../js/session.js" defer></script>
+  <script src="../js/checkout.js" defer></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="index.html">Startseite</a>
+      <a href="cart.html">Warenkorb</a>
+      <a href="orders.html">Bestellungen</a>
+    </div>
+    <div class="nav-right" id="user-info"></div>
+  </nav>
+
+  <main>
+    <h1>Bestellung abschließen</h1>
+    <div id="order-summary"></div>
+
+    <h2>Zahlungsmethode wählen</h2>
+    <form id="checkoutForm">
+      <div>
+        <label><input type="radio" name="payment" value="credit_card" /> Kreditkarte</label>
+      </div>
+      <div>
+        <label><input type="radio" name="payment" value="paypal" /> PayPal</label>
+      </div>
+      <div>
+        <label for="voucherCode">Gutschein-Code:</label>
+        <input type="text" id="voucherCode" placeholder="Gutscheincode eingeben"/>
+        <button id="applyVoucherBtn">Anwenden</button>
+        <span id="voucherFeedback"></span>
+      </div>
+
+      <button type="submit">Jetzt bestellen</button>
+      <div id="checkoutResponse"></div>
+    </form>
+  </main>
+</body>
+</html>

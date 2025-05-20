@@ -12,15 +12,25 @@
   <nav class="navbar">
     <div class="nav-left">
       <a href="../../index.html">Startseite</a>
-      <a href="cart.html" id="cart-indicator" class="drop-target">
-        🛒 Warenkorb (<span id="cart-count">0</span>)
-      </a>
+      <a href="cart.html">Warenkorb (<span id="cart-count">0</span>)</a>
+      <a href="orders.html">Bestellungen</a>
     </div>
     <div class="nav-right" id="user-info"></div>
   </nav>
 
   <main>
     <h1>Unsere Produkte</h1>
+
+ <!-- Search Field -->
+  <div id="search-container" class="search-container">
+    <label for="search-input">Suche:</label>
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Produkt suchen…"
+      autocomplete="off"
+    />
+  </div>
 
     <div id="filter-container">
       <label for="category-filter">Kategorie:</label>

@@ -80,9 +80,14 @@ switch ($action) {
     case 'createOrder':
     case 'getOrders':
     case 'getOrder':
-        require_once __DIR__ . '/Handler/orderHandler.php';
-        $handler = new orderHandler();
-        break;
+        if (!isset($_SESSION['user_id'])) {
+        http_response_code(401);
+        echo json_encode(['success'=>false,'error'=>'Unauthorized']);
+        exit;
+    }
+    require_once __DIR__ . '/Handler/orderHandler.php';
+    $handler = new orderHandler();
+    break;
 
     // Vouchers
     case 'applyVoucher':

@@ -14,6 +14,11 @@ $(document).ready(function () {
     const productId = $(this).data('id');
     updateCart(productId, 0);
   });
+
+   //  Checkout-Button click → go to checkout page
+  $(document).on('click', '#checkoutBtn', function() {
+    window.location.href = 'checkout.html';
+  });
 });
 
 // 1) Warenkorb vom Server holen
@@ -102,4 +107,7 @@ function renderCart(items) {
   });
 
   $('#cart-total').text(`${total.toFixed(2)} €`);
+  
+  // ➤ Enable checkout if there’s at least one item
+  $('#checkoutBtn').prop('disabled', items.length === 0);
 }
