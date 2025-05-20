@@ -1,18 +1,20 @@
 <?php
+require_once __DIR__ . '/../../models/product.class.php';
+
 class productHandler {
-    /*
-      Main dispatcher for product-related actions
-      @param string $action
-      @param array  $input
-      @return array
-     */
+    private Product $productModel;
+
+    public function __construct() {
+        $this->productModel = new Product();
+    }
+
     public function handle(string $action, array $input): array {
         switch ($action) {
             case 'getProducts':
                 return $this->getProducts();
 
             case 'getProduct':
-                $id = isset($input['productId']) ? (int) $input['productId'] : 0;
+                $id = (int)($input['productId'] ?? $input['id'] ?? 0);
                 return $this->getProduct($id);
 
             case 'createProduct':
@@ -22,11 +24,11 @@ class productHandler {
                 return $this->updateProduct($input);
 
             case 'deleteProduct':
-                $id = isset($input['productId']) ? (int) $input['productId'] : 0;
+                $id = (int)($input['productId'] ?? $input['id'] ?? 0);
                 return $this->deleteProduct($id);
 
             case 'deleteImage':
-                $id = isset($input['imageId']) ? (int) $input['imageId'] : 0;
+                $id = (int)($input['imageId'] ?? $input['id'] ?? 0);
                 return $this->deleteImage($id);
 
             case 'searchProducts':
@@ -34,113 +36,123 @@ class productHandler {
                 return $this->searchProducts($q);
 
             case 'getProductsByCategory':
-                $catId = isset($input['categoryId']) ? (int) $input['categoryId'] : 0;
-                return $this->getProductsByCategory($catId);
+                $cat = $input['category'] ?? '';
+                return $this->getProductsByCategory($cat);
 
             default:
-                return [
-                    'success' => false,
-                    'error'   => "Unknown action: \$action"
-                ];
+                return ['success' => false, 'error' => "Unknown action: $action"];
         }
     }
 
-    // Fetch all products and categories
     private function getProducts(): array {
         try {
-            // Direkt mit PDO verbinden (alternativ: dbaccess verwenden)
-            $pdo = new PDO("mysql:host=localhost;dbname=cravy", "root", "");
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // Produkte abrufen
-            $sql = "SELECT * FROM products ORDER BY created_at DESC";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
-            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Preis und Rating typkonvertieren
-            foreach ($products as &$p) {
-                $p['price']  = (float) $p['price'];
-                $p['rating'] = isset($p['rating']) ? (float) $p['rating'] : null;
-            }
-            unset($p);
-
-            // Kategorien abrufen
-            $sqlCat = "SELECT DISTINCT category FROM products ORDER BY category ASC";
-            $stmtC  = $pdo->prepare($sqlCat);
-            $stmtC->execute();
-            $categories = $stmtC->fetchAll(PDO::FETCH_COLUMN);
-
+            $products = $this->productModel->getAllProducts();
+            $categories = array_unique(array_column($products, 'category'));
             return [
-                'success'    => true,
-                'products'   => $products,
+                'success' => true,
+                'products' => $products,
                 'categories' => $categories
             ];
-
         } catch (Exception $e) {
-            return [
-                'success' => false,
-                'error'   => $e->getMessage()
-            ];
+            return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 
-    // Fetch a single product by ID
-     
     private function getProduct(int $id): array {
-        if ($id <= 0) {
-            return ['success' => false, 'error' => 'Invalid product ID'];
-        }
+        if ($id <= 0) return ['success' => false, 'error' => 'Invalid product ID'];
+        $product = $this->productModel->getProductById($id);
+        return $product
+            ? ['success' => true, 'product' => $product]
+            : ['success' => false, 'error' => 'Product not found'];
+    }
+
+    private function createProduct(array $data): array {
         try {
-            $pdo = new PDO("mysql:host=localhost;dbname=cravy", "root", "");
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = "SELECT * FROM products WHERE id = :id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':id' => $id]);
-            $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$product) {
-                return ['success' => false, 'error' => 'Product not found'];
+            $required = ['name', 'description', 'price', 'category'];
+            foreach ($required as $field) {
+                if (empty($_POST[$field])) {
+                    return ['success' => false, 'error' => "Feld '$field' ist erforderlich."];
+                }
             }
-            // Typkonvertierung
-            $product['price']  = (float) $product['price'];
-            $product['rating'] = isset($product['rating']) ? (float) $product['rating'] : null;
 
-            return ['success' => true, 'product' => $product];
+            $imagePath = null;
+            if (!empty($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../../productpictures/';
+                $filename = basename($_FILES['image']['name']);
+                $targetPath = $uploadDir . $filename;
+
+                if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+                    return ['success' => false, 'error' => 'Bild konnte nicht gespeichert werden.'];
+                }
+
+                $imagePath = $filename;
+            }
+
+            $productData = [
+                'name'        => $_POST['name'],
+                'description' => $_POST['description'],
+                'price'       => (float)$_POST['price'],
+                'image_path'  => $imagePath,
+                'rating'      => $_POST['rating'] ?? null,
+                'category'    => $_POST['category']
+            ];
+
+            $success = $this->productModel->createProduct($productData);
+
+            return $success
+                ? ['success' => true, 'message' => 'Produkt erfolgreich erstellt!']
+                : ['success' => false, 'error' => 'Datenbankfehler bei Erstellung.'];
 
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
 
-    // Stub: Create a new product
-     
-    private function createProduct(array $data): array {
-        // TODO: Implement create logic
-        return ['success' => false, 'error' => 'createProduct not implemented'];
-    }
-
-    // Stub: Update an existing product
-     
     private function updateProduct(array $data): array {
-        // TODO: Implement update logic
-        return ['success' => false, 'error' => 'updateProduct not implemented'];
-    }
+        if (empty($_POST['id'])) {
+            return ['success' => false, 'error' => 'ID fehlt für Update'];
+        }
 
-    // Stub: Delete a product by ID
+        try {
+            $id = (int)$_POST['id'];
 
-    private function deleteProduct(int $id): array {
-        // TODO: Implement delete logic
-        return ['success' => false, 'error' => 'deleteProduct not implemented'];
-    }
+            $required = ['name', 'description', 'price', 'category'];
+            foreach ($required as $field) {
+                if (empty($_POST[$field])) {
+                    return ['success' => false, 'error' => "Feld '$field' ist erforderlich."];
+                }
+            }
 
-    // Stub: Delete an image by ID
-     
-    private function deleteImage(int $imageId): array {
-        // TODO: Implement image delete logic
-        return ['success' => false, 'error' => 'deleteImage not implemented'];
-    }
+            $imagePath = null;
+            if (!empty($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../../productpictures/';
+                $filename = basename($_FILES['image']['name']);
+                $targetPath = $uploadDir . $filename;
+
+
+                if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+                    return ['success' => false, 'error' => 'Bild konnte nicht gespeichert werden.'];
+                }
+
+                $imagePath = $filename;
+            }
+
+            $existing = $this->productModel->getProductById($id);
+            $updateData = [
+                ':id'          => $id,
+                ':name'        => $_POST['name'],
+                ':description' => $_POST['description'],
+                ':price'       => (float)$_POST['price'],
+                ':rating'      => $_POST['rating'] ?? null,
+                ':category'    => $_POST['category'],
+                ':image_path'  => $imagePath ?? $existing['image_path']
+            ];
+
+            $success = $this->productModel->updateProduct($updateData);
+
+            return $success
+                ? ['success' => true, 'message' => 'Produkt erfolgreich aktualisiert.']
+                : ['success' => false, 'error' => 'Aktualisierung fehlgeschlagen.'];
 
     // Search products by a query string
      
@@ -148,6 +160,7 @@ class productHandler {
     if ($query === '') {
         return ['success'=>false,'error'=>'Empty search query'];
     }
+
 
     $db = dbaccess::getInstance();
     $sql = "
@@ -173,32 +186,44 @@ class productHandler {
     ];
 }
 
-    // Get products filtered by category ID
+    private function deleteProduct(int $id): array {
+        if ($id <= 0) return ['success' => false, 'error' => 'Ungültige Produkt-ID'];
 
-    private function getProductsByCategory(int $categoryId): array {
         try {
-            $pdo = new PDO("mysql:host=localhost;dbname=cravy", "root", "");
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $product = $this->productModel->getProductById($id);
+            $imagePath = $product['image_path'] ?? null;
 
-            $sql = "SELECT * FROM products WHERE category_id = :cat ORDER BY created_at DESC";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([':cat' => $categoryId]);
-            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if (empty($products)) {
-                return ['success' => false, 'error' => 'No products in this category'];
+            if ($imagePath) {
+                $file = __DIR__ . '/../../productpictures/' . $imagePath;
+                if (file_exists($file)) {
+                    unlink($file);
+                }
             }
 
-            foreach ($products as &$p) {
-                $p['price']  = (float) $p['price'];
-                $p['rating'] = isset($p['rating']) ? (float) $p['rating'] : null;
-            }
-            unset($p);
-
-            return ['success' => true, 'products' => $products];
+            $success = $this->productModel->deleteProduct($id);
+            return $success
+                ? ['success' => true, 'message' => 'Produkt gelöscht']
+                : ['success' => false, 'error' => 'Produkt konnte nicht gelöscht werden'];
 
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
+    }
+
+    private function searchProducts(string $query): array {
+        $results = $this->productModel->searchProducts($query);
+        return count($results)
+            ? ['success' => true, 'products' => $results]
+            : ['success' => false, 'error' => 'Keine passenden Produkte gefunden'];
+    }
+
+    private function getProductsByCategory(string $category): array {
+        if (empty($category)) {
+            return ['success' => false, 'error' => 'Kategorie fehlt'];
+        }
+        $products = $this->productModel->getProductsByCategory($category);
+        return count($products)
+            ? ['success' => true, 'products' => $products]
+            : ['success' => false, 'error' => 'Keine Produkte in dieser Kategorie'];
     }
 }

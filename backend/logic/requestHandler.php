@@ -35,6 +35,7 @@ switch ($action) {
     case 'login':
     case 'logout':
     case 'check_login':
+    case 'register':
         require_once __DIR__ . '/Handler/authHandler.php';
         $handler = new authHandler();
         break;
@@ -54,10 +55,11 @@ switch ($action) {
 
     // User management (admin)
     case 'getUserData':
-    case 'listCustomers':
-    case 'toggleCustomer':
+    case 'listUsers':
+    case 'toggleUserStatus':
         require_once __DIR__ . '/Handler/userHandler.php';
         $handler = new userHandler();
+         $response = $handler->handle($action, $_POST);
         break;
 
     // Cart (must be logged in)
