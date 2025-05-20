@@ -3,21 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <title>Cravy Start</title>
+  <!-- Deine CSS -->
+  <link rel="stylesheet" href="frontend/res/css/style.css" />
+
+  <!-- jQuery (für session.js) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="frontend/js/script.js" defer></script>
-  <link rel="stylesheet" href="frontend\res\css\style.css">
+  <!-- Session-Handling: Prüft Login, zeigt User-Info und Logout -->
+  <script src="frontend/js/session.js" defer></script>
 </head>
 <body>
   <header>
     <nav class="navbar">
       <div class="nav-left">
         <a href="frontend/sites/products.html">Produkte</a>
-        <a href="frontend/sites/cart.html">Warenkorb</a>
+        <a href="frontend/sites/cart.html">Warenkorb (<span id="cart-count">0</span>)</a>
+        <a href="frontend/sites/orders.html">Bestellungen</a>
       </div>
       <div class="nav-right" id="user-info"></div>
     </nav>
     <h1>Willkommen bei Cravy</h1>
   </header>
-  
 </body>
 </html>
