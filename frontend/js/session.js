@@ -53,6 +53,20 @@ $(function() {
           username: res.username,
           is_admin: res.is_admin
         }));
+        // ◉ MERGE GUEST CART HERE:
+      const guestCart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (guestCart.length) {
+        guestCart.forEach(item => {
+          // send each to server
+          ajaxAuth({
+           action:    'add_to_cart',
+           productId: item.id,
+           quantity:  item.quantity
+         }, () => {/* ignore response */});
+       });
+      // clear LocalStorage fallback
+      localStorage.removeItem('cart');
+    }
         window.location.href = '../../index.html';
       } else {
         $('#response').text(res.error).css('color', 'red');
@@ -117,6 +131,9 @@ $(function() {
       }
     });
   }
+  
+  // expose it to the global scope so orders.js (and any other script) can call it
+window.ajaxAuth = ajaxAuth;
 
   // 9) Show admin panel in the DOM
   function showAdminPanel() {
