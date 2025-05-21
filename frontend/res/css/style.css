@@ -12,7 +12,7 @@ body {
     linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
     url('../snackback.jpg') no-repeat center center fixed;
   background-size: cover;
-  padding: 20px;
+  padding: px;
   padding-bottom: 4rem;
 }
 
@@ -23,12 +23,11 @@ h1 {
 
 /* ===== Index / Welcome Hero ===== */
 .welcome {
-  height: 80vh;
+  height: 65vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  /* kein eigenes Background mehr */
 }
 
 .welcome-content h1 {
