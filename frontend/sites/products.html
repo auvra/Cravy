@@ -1,46 +1,63 @@
 <html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <title>Produkte – Cravy</title>
-  <link rel="stylesheet" href="../res/css/style.css" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../js/session.js" defer></script>
-  <!-- Produkt-Logik & Drag’n’Drop -->
-  <script src="../js/products.js" defer></script>
-</head>
-<body>
-  <nav class="navbar">
-    <div class="nav-left">
-      <a href="../../index.html">Startseite</a>
-      <a href="cart.html" id="cart-indicator" class="drop-target">
-        🛒 Warenkorb (<span id="cart-count">0</span>)</a>
-      <a href="orders.html">Bestellungen</a>
-    </div>
-    <div class="nav-right" id="user-info"></div>
-  </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
+      integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
+      crossorigin="anonymous"
+    ></script>
 
-  <main>
-    <h1>Unsere Produkte</h1>
-
- <!-- Search Field -->
-  <div id="search-container" class="search-container">
-    <label for="search-input">Suche:</label>
-    <input
-      type="text"
-      id="search-input"
-      placeholder="Produkt suchen…"
-      autocomplete="off"
+    <title>Produkte – Cravy</title>
+    <script src="../js/products.js" defer></script>
+    <link rel="stylesheet" href="../res/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+      crossorigin="anonymous"
     />
-  </div>
+  </head>
 
-    <div id="filter-container">
-      <label for="category-filter">Kategorie:</label>
-      <select id="category-filter">
-        <option value="">Alle Kategorien</option>
-      </select>
-    </div>
+  <body>
+    <nav class="navbar">
+      <div class="nav-left">
+        <a href="../../index.html">Startseite</a>
+        <a href="cart.html" id="cart-indicator" class="drop-target">
+          🛒 Warenkorb (<span id="cart-count">0</span>)</a
+        >
+        <a href="account.html">Mein Konto</a>
+      </div>
+      <div class="nav-right" id="user-info"></div>
+    </nav>
 
-    <div id="product-grid" class="product-grid"></div>
-  </main>
-</body>
+    <main>
+      <h1>Unsere Produkte</h1>
+
+      <!-- Search Field -->
+      <div id="search-container" class="search-container">
+        <label for="search-input">Suche:</label>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Produkt suchen…"
+          autocomplete="off"
+        />
+      </div>
+
+      <div id="filter-container">
+        <label for="category-filter">Kategorie:</label>
+        <select id="category-filter">
+          <option value="">Alle Kategorien</option>
+        </select>
+      </div>
+
+      <div id="product-grid" class="product-grid"></div>
+    </main>
+  </body>
 </html>

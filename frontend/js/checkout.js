@@ -45,30 +45,41 @@ $(function() {
   }
 
   // 3) Apply voucher
-  $('#applyVoucherBtn').on('click', function(e) {
-    e.preventDefault();
-    const code = $('#voucherCode').val().trim();
-    if (!code) return;
-    $.ajax({
-      url: "../../backend/logic/requestHandler.php",
-      method: "POST",
-      contentType: "application/json",
-      dataType: "json",
-      data: JSON.stringify({ action: 'validateVoucher', voucherCode: code }),
-      success(res) {
-        if (res.success) {
-          voucher = res.voucher;
-          voucherValue = parseFloat(res.voucher.value);
-          $('#voucherFeedback').text('Gutschein angewendet!').css('color','green');
-        } else {
-          voucher = null;
-          voucherValue = 0;
-          $('#voucherFeedback').text(res.error).css('color','red');
-        }
-        renderSummary();
+  $('#applyVoucherBtn').on('click', function () {
+  const code = $('#voucherInput').val().trim();
+  const total = parseFloat($('#cartTotal').text());
+
+  if (!code || isNaN(total) || total <= 0) {
+    alert('Bitte gültigen Code und Betrag eingeben.');
+    return;
+  }
+
+  $.ajax({
+    url: '/cravy/WebProj/backend/logic/requestHandler.php',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      action: 'validateVoucher',
+      code: code,
+      total: total
+    }),
+    success: function (res) {
+      console.log('Antwort:', res);
+      if (res.success) {
+        $('#discountAmount').text(res.discount.toFixed(2));
+        $('#finalTotal').text(res.new_total.toFixed(2));
+        alert(res.message);
+      } else {
+        alert(res.error);
       }
-    });
+    },
+    error: function () {
+      alert('Fehler beim Serverkontakt.');
+    }
   });
+});
+
+
 
   // 4) Submit order
   $('#checkoutForm').on('submit', function(e) {
@@ -101,7 +112,7 @@ $(function() {
             'Bestellung erfolgreich! Leite weiter…'
           ).css('color','green');
           setTimeout(() => {
-            window.location.href = 'orders.html';
+            window.location.href = 'account.html';
           }, 1000);
         }
         else {

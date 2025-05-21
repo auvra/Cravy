@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
+      integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>Rechnung - Cravy</title>
+    <script src="../js/rechnung.js" defer></script>
+    <link rel="stylesheet" href="../res/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+      crossorigin="anonymous"
+    />
+    <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .invoice { max-width: 800px; margin: auto; border: 1px solid #ccc; padding: 20px; }
+    h1 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .total { font-weight: bold; text-align: right; }
+    .address { margin-top: 10px; }
+    .print-btn { margin-top: 20px; }
+  </style>
+  </head>
+<body>
+  <div class="invoice" id="invoice">
+    <h1>Rechnung</h1>
+    <p><strong>Rechnungsnummer:</strong> <span id="invoiceNumber"></span></p>
+    <p><strong>Bestelldatum:</strong> <span id="orderDate"></span></p>
+
+    <div class="address">
+      <strong>Lieferadresse:</strong>
+      <p id="address"></p>
+    </div>
+
+    <h2>Bestellte Artikel</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Produkt</th>
+          <th>Preis</th>
+          <th>Menge</th>
+          <th>Gesamt</th>
+        </tr>
+      </thead>
+      <tbody id="invoiceItems"></tbody>
+    </table>
+
+    <p class="total">Gesamtsumme: <span id="totalAmount"></span> €</p>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Rechnung drucken</button>
+  </div>
+
+  
+</body>
+</html>
