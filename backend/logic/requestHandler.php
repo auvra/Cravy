@@ -57,10 +57,10 @@ switch ($action) {
     case 'getUserData':
     case 'listUsers':
     case 'toggleUserStatus':
-        require_once __DIR__ . '/Handler/userHandler.php';
-        $handler = new userHandler();
-         $response = $handler->handle($action, $_POST);
-        break;
+    require_once __DIR__ . '/Handler/userHandler.php';
+    $handler = new userHandler(); 
+    break;
+
 
     // Cart (must be logged in)
     case 'add_to_cart':
@@ -89,13 +89,15 @@ switch ($action) {
     $handler = new orderHandler();
     break;
 
-    // Vouchers
-    case 'applyVoucher':
-    case 'getVoucher':
+    // Voucher
+    case 'createVoucher':
+    case 'listVouchers':
+    case 'deleteVoucher':
     case 'validateVoucher':
-        require_once __DIR__ . '/Handler/voucherHandler.php';
-        $handler = new voucherHandler();
-        break;
+    require_once __DIR__ . '/Handler/voucherHandler.php';
+    $handler = new voucherHandler();
+    break;
+
 }
 
 // If no handler was matched, return an error

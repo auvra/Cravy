@@ -56,6 +56,11 @@ class User {
             return ['success' => false, 'error' => 'Benutzername oder Passwort falsch.'];
         }
 
+        if ((int)$user['is_active'] === 0) {
+            return ['success' => false, 'error' => 'Dein Account ist gesperrt. Kontaktieren Sie bitte den Support.'];
+        }
+
+
         $_SESSION['user_id']  = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['is_admin'] = $user['is_admin'];
@@ -70,6 +75,13 @@ class User {
             'username' => $user['username'],
             'is_admin' => $user['is_admin']
         ];
+    }
+    
+    public static function requireAdmin(): void {
+        if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== 1) {
+            header('Location: /error/403');
+            exit;
+        }
     }
 
     public static function logout(): array {

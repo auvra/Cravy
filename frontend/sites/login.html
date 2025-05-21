@@ -1,32 +1,60 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../js/session.js" defer></script>
-  <link rel="stylesheet" href="../res/css/style.css">
-</head>
-<body>
-  <nav class="navbar">
-    <div class="nav-left">
-      <a href="../../index.html">Startseite</a>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
+      integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>Login</title>
+    <script src="../js/session.js" defer></script>
+    <link rel="stylesheet" href="../res/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar">
+      <div class="nav-left">
+        <a href="../../index.html">Startseite</a>
+      </div>
+    </nav>
+    <div class="auth-container">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input
+          type="text"
+          id="loginCredentials"
+          placeholder="Benutzername oder E-Mail"
+          required
+        /><br />
+        <input
+          type="password"
+          id="password"
+          placeholder="Passwort"
+          required
+        /><br />
+        <div class="remember-me">
+          <input type="checkbox" id="remember" />
+          <label for="remember">Login merken</label>
+        </div>
+        <button type="submit">Einloggen</button>
+      </form>
+      <p>Noch kein Konto? <a href="register.html">Jetzt registrieren</a></p>
     </div>
-  </nav>
-  <div class="auth-container">
-  <h2>Login</h2>
-  <form id="loginForm">
-    <input type="text" id="loginCredentials" placeholder="Benutzername oder E-Mail" required><br>
-    <input type="password" id="password" placeholder="Passwort" required><br>
-    <div class="remember-me">
-      <input type="checkbox" id="remember">
-      <label for="remember">Login merken</label>
-    </div>       
-    <button type="submit">Einloggen</button>
-  </form>
-    <p>Noch kein Konto? <a href="register.html">Jetzt registrieren</a></p>
-  </div>
-  
-  <div id="response"></div>
-</body>
+
+    <div id="response"></div>
+  </body>
 </html>

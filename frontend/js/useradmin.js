@@ -38,7 +38,7 @@ $(document).ready(function() {
   : '<span class="badge bg-danger">Deaktiviert</span>';
 
 const $card = $(`
-  <div class="card mb-3">
+  <div class="card mb-3" id="user-card-${c.id}">
     <div class="card-body">
       <h5>${c.firstname} ${c.lastname} (${c.username}) ${activeBadge}</h5>
       <p><strong>Email:</strong> ${c.email}</p>
@@ -63,28 +63,30 @@ const $card = $(`
 
   
   
-  // Kunden aktivieren/deaktivieren
  function toggleActivation(userId, currentStatus) {
   const actionText = currentStatus == 1 ? "deaktivieren" : "aktivieren";
-  if (confirm(`Willst du den Kunden wirklich ${actionText}?`)) {
-    $.ajax({
-      url: '/cravy/WebProj/backend/logic/requestHandler.php',
-      type: "POST",
-      data: {
-        action: "toggleUserStatus",
-        id: userId
-      },
-      dataType: "json",
-      success: function (response) {
-        alert(response.message);
-        loadUsers(); // Liste neu laden
-      },
-      error: function () {
-        alert("Fehler beim Ändern des Status.");
-      }
-    });
-  }
+  if (!confirm(`Willst du den Kunden wirklich ${actionText}?`)) return;
+
+  $.ajax({
+    url: '/cravy/WebProj/backend/logic/requestHandler.php',
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({
+      action: "toggleUserStatus",
+      id: userId
+    }),
+    success: function (response) {
+      console.log("Antwort vom Server:", response);
+      alert(response.message);
+      loadUsers();
+    },
+    error: function (xhr, status, error) {
+      console.error("AJAX-Fehler:", xhr.responseText);
+      alert("Fehler beim Serverkontakt.");
+    }
+  });
 }
+
 
 
   
