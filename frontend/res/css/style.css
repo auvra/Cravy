@@ -1,12 +1,55 @@
-/* ===== Global Styles ===== */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #fff7f9;
-  padding: 20px;
+/* ===== Global & Background ===== */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
+body {
+  font-family: Arial, sans-serif;
+  /* halbtransparenter Weiß-Layer + Snack-Background */
+  background:
+    linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+    url('../snackback.jpg') no-repeat center center fixed;
+  background-size: cover;
+  padding: 20px;
+  padding-bottom: 4rem;
+}
+
+/* ===== Global Typography ===== */
 h1 {
   color: #c71585;
+}
+
+/* ===== Index / Welcome Hero ===== */
+.welcome {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* kein eigenes Background mehr */
+}
+
+.welcome-content h1 {
+  font-size: 4rem;
+  color: #C71585;
+  margin: 0;
+}
+
+.welcome-content p {
+  font-size: 1.2rem;
+  margin: 1rem 0 2rem;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #C71585;
+  color: #fff;
+  padding: 0.75em 1.5em;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
 /* ===== Navbar Styles ===== */
@@ -59,7 +102,6 @@ h1 {
   margin-right: 20px;
 }
 
-
 /* ===== Styles für Produktansicht ===== */
 .product-grid {
   display: grid;
@@ -71,7 +113,7 @@ h1 {
 
 .product-card {
   max-width: 300px;
-  margin: auto; /* zentriert die Karte in ihrer Spalte */
+  margin: auto;
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 15px;
@@ -79,7 +121,6 @@ h1 {
   background-color: #fff;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
 }
-
 
 .product-card img {
   width: 100%;
@@ -94,10 +135,11 @@ h1 {
   color: #c71585;
 }
 
-/* ===== Product Search  ===== */
+/* ===== Product Search ===== */
 .search-container {
   margin-bottom: 1rem;
 }
+
 #search-input {
   width: 100%;
   padding: 0.5rem;
@@ -106,7 +148,7 @@ h1 {
 
 /* ===== Filter Dropdown (Kategorien) ===== */
 #filter-container {
-  max-width: 300px; /* begrenzt die Breite */
+  max-width: 300px;
   margin-bottom: 20px;
 }
 
@@ -164,5 +206,45 @@ h1 {
   margin-bottom: 15px;
 }
 
+/* ===== Footer ===== */
+.site-footer {
+  background-color: #ffe6ea;
+  color: #333;
+  padding: 1rem 2rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
 
+.site-footer .footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
+.site-footer .footer-content > * {
+  flex: 1;
+  text-align: center;
+}
+
+.site-footer .footer-nav {
+  flex: 2;
+}
+
+.site-footer .footer-nav a,
+.site-footer .social-links a {
+  color: inherit;
+  text-decoration: none;
+  margin: 0 .5rem;
+}
+
+.site-footer .footer-nav a:hover,
+.site-footer .social-links a:hover {
+  text-decoration: underline;
+}
